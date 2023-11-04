@@ -12,6 +12,7 @@ function usually called by our neural network code.
 # Standard library
 import pickle
 import gzip
+import csv
 
 # Third-party libraries
 import numpy as np
@@ -34,6 +35,39 @@ def load_data_wrapper():
     return (training_data, validation_data, test_data)
 
 def vectorized_result(j):
-    e = np.zeros((10, 1))
-    e[j] = 1.0
+    e = np.zeros((13, 1))
+    if j != 13:
+        e[j] = 1.0
+    else:
+        e[0] = 1.0
     return e
+
+def test_result(j):
+    if j != 13:
+        return j
+    else:
+        return 0
+
+def load_gops():
+    with open("training_data.csv") as raw_data:
+        data = csv.reader(raw_data)
+        training_inputs = [np.reshape(np.array(list(map(int, line[1:]))), (40, 1)) for line in data]
+
+    with open("training_data.csv") as raw_data:
+        data = csv.reader(raw_data)
+        training_results = [vectorized_result(int(line[0])) for line in data]
+    training_data = zip(training_inputs, training_results)
+
+    with open("test_data.csv") as raw_data:
+        data = csv.reader(raw_data)
+        test_inputs = [np.reshape(np.array(list(map(int, line[1:]))), (40, 1)) for line in data]
+
+    with open("test_data.csv") as raw_data:
+        data = csv.reader(raw_data)
+        test_results = [int(line[0]) for line in data]
+    training_data = zip(training_inputs, training_results)
+    test_data = zip(test_inputs, test_results)
+    return training_data, test_data
+
+
+
