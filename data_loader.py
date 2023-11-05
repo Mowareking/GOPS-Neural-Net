@@ -36,17 +36,8 @@ def load_data_wrapper():
 
 def vectorized_result(j):
     e = np.zeros((13, 1))
-    if j != 13:
-        e[j] = 1.0
-    else:
-        e[0] = 1.0
+    e[j] = 1.0
     return e
-
-def test_result(j):
-    if j != 13:
-        return j
-    else:
-        return 0
 
 def load_gops():
     with open("training_data.csv") as raw_data:
@@ -55,7 +46,21 @@ def load_gops():
 
     with open("training_data.csv") as raw_data:
         data = csv.reader(raw_data)
-        training_results = [vectorized_result(int(line[0])) for line in data]
+        training_results = []
+        for line in data:
+            index = []
+            opp_move = int(line[0])
+            higher = sum(list(map(int, line[opp_move+1:14])))
+            for j, digit in enumerate(line[1:14]):
+                if int(digit):
+                    if not higher:
+                        index = j
+                        break
+                    else:
+                        if j >= opp_move:
+                            index = j
+                            break
+            training_results.append(vectorized_result(index))
     training_data = zip(training_inputs, training_results)
 
     with open("test_data.csv") as raw_data:
@@ -64,7 +69,21 @@ def load_gops():
 
     with open("test_data.csv") as raw_data:
         data = csv.reader(raw_data)
-        test_results = [int(line[0]) for line in data]
+        test_results = []
+        opp_move = int(line[0])
+        for line in data:
+            index = []
+            higher = sum(list(map(int, line[opp_move+1:14])))
+            for j, digit in enumerate(line[1:14]):
+                if int(digit):
+                    if not higher:
+                        index = j
+                        break
+                    else:
+                        if j >= opp_move:
+                            index = j
+                            break
+            test_results.append(index)
     training_data = zip(training_inputs, training_results)
     test_data = zip(test_inputs, test_results)
     return training_data, test_data

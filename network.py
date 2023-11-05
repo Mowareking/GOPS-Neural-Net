@@ -24,7 +24,7 @@ class Network():
         if test_data:
             test_data = list(test_data)
             num_test = len(test_data)
-            best_accuracy = 0
+            best_accuracy = 341
 
         for epoch in range(1, epochs+1):
             random.shuffle(training_data)
@@ -36,6 +36,7 @@ class Network():
                 if accuracy > best_accuracy:
                     best_accuracy = accuracy
                     self.save("best_network.json")
+                    print(f"New Best: {best_accuracy}")
                 print("Epoch {0}: {1} / {2}".format(epoch, accuracy, num_test))
             else:
                 print ("Epoch {0} complete".format(epoch))
@@ -95,8 +96,6 @@ class Network():
         return sum(int(x == y) for (x, y) in test_results)
 
     def cost_derivative(self, output_activations, y):
-        """Return the vector of partial derivatives \partial C_x /
-        \partial a for the output activations."""
         return (output_activations-y)
     
     def save(self, filename):
@@ -234,7 +233,8 @@ def versus(net):
     print(f"Final scores:\nYour prize total: {sum_cards(opponent_prizes)} Computer prize total: {sum_cards(computer_prizes)}")
     
 
-net = Network.load("best_network.json")
-versus(net)
+#net = Network([40, 110, 13])
 #tr, te = load_gops()
 #net.SGD(tr, 70, 10, 0.5, 0.1, te)
+net = Network.load("best_network.json")
+versus(net)
